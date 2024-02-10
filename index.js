@@ -1,6 +1,6 @@
 const express = require('express')   // importing a libarary
 const mongoose = require('mongoose')
-const {registerHandler , loginHandler }= require('./controllers/userController')
+const {registerHandler , loginHandler , deleteUser , forgotPassHandler }= require('./controllers/userController')
 const bodyParser = require('body-parser')
 
 
@@ -33,6 +33,9 @@ server.get('/home' , (req , res)=>{res.send("this is home page  ")})
 
 server.post('/user/register' , registerHandler  )
 server.post('/user/login'  , loginHandler)
+server.post('/user/delete/me'  , deleteUser)
+server.post('/user/forgotPass'  , forgotPassHandler)
+
 
 
 

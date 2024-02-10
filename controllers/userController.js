@@ -1,6 +1,16 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/usermodel");
 const Jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+const transport = nodemailer.createTransport({
+  service: "gmail", // name smtp service provider     // esp
+  secure: "false", // ssl/ tls certificate required if true
+  auth: {
+    user: "irfanusuf33@gmail.com",
+    pass: "tigm xldm sazj cxf",
+  },
+});
 
 const registerHandler = async (req, res) => {
   try {
@@ -54,4 +64,54 @@ const loginHandler = async (req, res) => {
   }
 };
 
-module.exports = { registerHandler, loginHandler };
+const deleteUser = async (req, res) => {
+  try {
+    const { _id } = req.query;
+
+    const delUser = await User.findByIdAndDelete(_id);
+
+    if (delUser) {
+      res.json({ message: "User account deleted!" });
+    } else {
+      res.json({ message: "User Not Found " });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const forgotPassHandler = async (req, res) => {
+  const { email } = req.body;
+
+  const IsUser = await User.findOne({ email });
+
+  if (IsUser) {
+    const options = {
+      from: "irfanusuf33@gmail.com",
+      to: `${email}`,
+      subject: "Changing Password Of express App",
+      text: "link",
+    };
+
+    const sendMail = await transport.sendMail(options);
+
+    if (sendMail) {
+      res.json({
+        message: "Change Password link Sent Succesfully on your Email!",
+      });
+    } else {
+      res.json({ message: "Server Error" });
+    }
+  }
+  else {
+
+    res.json({ message: "User not Found " });
+  }
+};
+
+module.exports = {
+  registerHandler,
+  loginHandler,
+  deleteUser,
+  forgotPassHandler,
+};
