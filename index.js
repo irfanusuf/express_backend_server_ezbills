@@ -1,48 +1,53 @@
-const express = require('express')   // importing a libarary
-const mongoose = require('mongoose')
-const {registerHandler , loginHandler , deleteUser , forgotPassHandler }= require('./controllers/userController')
-const bodyParser = require('body-parser')
+const express = require("express"); // importing a libarary
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+require("dotenv").config();
+const {
+  registerHandler,
+  loginHandler,
+  deleteUser,
+  forgotPassHandler,
+} = require("./controllers/userController");
+const {
+  createClientHandler,
+  getAllClients,
+  createFirmHandler,
+  getAllFirms,
+  createInventory,
+  getAllProducts
+} = require("./controllers/clientController");
 
+const port = 4000;
+const url = process.env.URI;
 
+const server = express();
 
-const port = 3000
-const url = 'mongodb://localhost:27017/express-app'
+server.use(bodyParser.json());
+server.use(cors());
 
-
-const server = express()
-
-server.use(bodyParser.json())
-
-if(mongoose.connect(url)){
-    console.log(`Database connected on ${url}`)
-}else {
-    console.log("Data base error ")
+if (mongoose.connect(url)) {
+  console.log(`Database connected on ${url}`);
+} else {
+  console.log("Data base error ");
 }
 
+// post routes
 
-
-// get routes 
-
-server.get('/' , (req , res)=>{res.send("hello world ")})
-server.get('/home' , (req , res)=>{res.send("this is home page  ")})
-
-
-
-
-// post routes 
-
-server.post('/user/register' , registerHandler  )
-server.post('/user/login'  , loginHandler)
-server.post('/user/delete/me'  , deleteUser)
-server.post('/user/forgotPass'  , forgotPassHandler)
+server.post("/user/register", registerHandler);
+server.post("/user/login", loginHandler);
+server.post("/user/delete/me", deleteUser);
+server.post("/user/forgotPass", forgotPassHandler);
 
 
 
+server.post("/admin/createClient", createClientHandler);
+server.post("/admin/createFirm", createFirmHandler);
+server.get("/admin/getAllClients", getAllClients);
+server.get("/admin/getAllFirms", getAllFirms);
+server.get("/admin/getAllProducts", getAllProducts);
+server.post("/admin/createParticular", createInventory);
 
-
-
-server.listen(port , ()=>{console.log(`server started on port ${port}`)})
-
-
-
-
+server.listen(port, () => {
+  console.log(`server started on port ${port}`);
+});
